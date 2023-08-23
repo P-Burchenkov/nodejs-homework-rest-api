@@ -1,8 +1,24 @@
 const { HttpError, ctrlWrapper } = require("../helpers");
 const { Contact } = require("../models/contact");
 
-const getAllContacts = async (_, res) => {
-  const result = await Contact.find();
+const getAllContacts = async (req, res) => {
+  const { page = 1, limit = 20, favorite } = req.query;
+  const skip = (page - 1) * limit;
+  const { _id: owner } = req.user;
+  let result;
+
+  if (!favorite) {
+    result = await Contact.find({ owner }, null, { skip, limit });
+  } else {
+    if (favorite !== "true" && favorite !== "false") {
+      console.log(favorite);
+      throw HttpError(400, "Fovorite must be 'true' or 'false'");
+    }
+    result = await Contact.find({ owner, favorite }, null, {
+      skip,
+      limit,
+    });
+  }
   res.json(result);
 };
 
@@ -16,7 +32,8 @@ const getContactById = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
-  const newcontact = await Contact.create(req.body);
+  const { _id: owner } = req.user;
+  const newcontact = await Contact.create({ ...req.body, owner });
   res.status(201).json(newcontact);
 };
 
