@@ -79,13 +79,13 @@ const updateSubscription = async (req, res) => {
   const { subscription } = req.body;
   const { _id } = req.user;
 
-  if (
-    subscription !== "starter" &&
-    subscription !== "pro" &&
-    subscription !== "business"
-  ) {
-    throw HttpError(400, "Bad request");
-  }
+  // if (
+  //   subscription !== "starter" &&
+  //   subscription !== "pro" &&
+  //   subscription !== "business"
+  // ) {
+  //   throw HttpError(400, "Bad request");
+  // }
   const user = await User.findByIdAndUpdate(
     _id,
     { subscription },
