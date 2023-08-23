@@ -10,7 +10,6 @@ const userSchema = new Schema(
   {
     name: {
       type: String,
-      require: true,
     },
     email: {
       type: String,
@@ -39,7 +38,7 @@ const userSchema = new Schema(
 const User = model("user", userSchema);
 
 const registerSchema = Joi.object({
-  name: Joi.string().trim().required(),
+  name: Joi.string().trim(),
   email: Joi.string().trim().required().pattern(emailRejex),
   password: Joi.string().trim().required().min(6),
 });

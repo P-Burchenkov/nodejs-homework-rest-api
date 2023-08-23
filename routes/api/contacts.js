@@ -7,6 +7,8 @@ const { isValidId } = require("../../middlewares");
 
 router.get("/", authenticate, contactCtrl.getAllContacts);
 
+router.get("/favorite", authenticate, contactCtrl.getFavoriteContacts);
+
 router.get("/:contactId", authenticate, isValidId, contactCtrl.getContactById);
 
 router.post(

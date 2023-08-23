@@ -2,11 +2,24 @@ const { HttpError, ctrlWrapper } = require("../helpers");
 const { Contact } = require("../models/contact");
 
 const getAllContacts = async (req, res) => {
-  const { page = 1, limit = 20, favorite } = req.query;
+  const { page = 1, limit = 20 } = req.query;
 
   const skip = (page - 1) * limit;
   const { _id: owner } = req.user;
-  const result = await Contact.find({ owner, favorite }, null, { skip, limit });
+  const result = await Contact.find({ owner }, null, { skip, limit });
+  res.json(result);
+};
+
+const getFavoriteContacts = async (req, res) => {
+  const { favorite } = req.query;
+  const { _id: owner } = req.user;
+
+  if (!favorite) {
+    throw HttpError(400, "Bad request");
+  }
+
+  const result = await Contact.find({ owner, favorite });
+
   res.json(result);
 };
 
@@ -70,4 +83,5 @@ module.exports = {
   deleteContact: ctrlWrapper(deleteContact),
   updateContact: ctrlWrapper(updateContact),
   updateStatusContact: ctrlWrapper(updateStatusContact),
+  getFavoriteContacts: ctrlWrapper(getFavoriteContacts),
 };
