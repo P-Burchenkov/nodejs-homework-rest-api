@@ -14,6 +14,14 @@ router.post(
   authCntrl.authUser
 );
 
+router.get("/verify/:verificationCode", authCntrl.verifyEmail);
+
+router.post(
+  "/verify",
+  validateBody(schemas.verificationSchema),
+  authCntrl.resendEmail
+);
+
 router.post("/login", validateBody(schemas.loginSchema), authCntrl.logIn);
 
 router.post("/logout", authenticate, authCntrl.logOut);
