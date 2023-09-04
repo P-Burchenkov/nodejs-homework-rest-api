@@ -26,20 +26,22 @@ const authUser = async (req, res) => {
   const avatarURL = gravatar.url(email);
   const verificationCode = nanoid();
 
-  const newUser = await User.create({
-    ...req.body,
-    password: hashedPassword,
-    avatarURL,
-    verificationCode,
-  });
-
   const verifyEmail = {
     to: email,
     subject: "Verification email",
     html: `<a trget=_blank href=${BASE_URL}/api/users/verify/${verificationCode}>Verify your email</a>`,
   };
 
-  await sendEmail(verifyEmail);
+  await sendEmail(verifyEmail).catch((err) => {
+    throw HttpError(err.status, err.message);
+  });
+
+  const newUser = await User.create({
+    ...req.body,
+    password: hashedPassword,
+    avatarURL,
+    verificationCode,
+  });
 
   res.status(201).json({
     user: {
@@ -87,7 +89,9 @@ const resendEmail = async (req, res) => {
     html: `<a trget=_blank href=${BASE_URL}/api/users/verify/${user.verificationCode}>Verify your email</a>`,
   };
 
-  await sendEmail(verifyEmail);
+  await sendEmail(verifyEmail).catch((err) => {
+    throw HttpError(err.status, err.message);
+  });
 
   res.json({
     message: "Email sent succeessful",

@@ -11,9 +11,14 @@ const mg = mailgun.client({
 });
 
 const sendEmail = (data) => {
-  mg.messages.create("sandbox639142e59b384903ac63b7b10f9c3c5b.mailgun.org", {
-    from: "Excited User <mailgun@sandbox-123.mailgun.org>",
-    ...data,
+  return new Promise(function (resolve, reject) {
+    mg.messages
+      .create("sandbox639142e59b384903ac63b7b10f9c3c5b.mailgun.org", {
+        from: "Excited User <mailgun@sandbox-123.mailgun.org>",
+        ...data,
+      })
+      .then((data) => resolve(data))
+      .catch((err) => reject(err));
   });
 };
 
